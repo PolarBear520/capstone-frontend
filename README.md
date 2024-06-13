@@ -74,6 +74,15 @@ bun run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-# 开发相关
-flowbite 组件，用了 tailwind css, 项目中可以用这些组件做UI
+# development
+## UI modules for developing UI
+flowbite-vue module，which relies on tailwind css, can be used to develop UI
 https://flowbite-vue.com/components/carousel
+
+## structure of project
+### /components, all UI code used more than once can be extracted to a component 
+### /server, all api calls will be put in the sub directory of /api
+### /mockdatabase, mocking data， will be removed after backend finished
+### /pages, all pages can be put here and will be automatically routed through structure of a directory, like <Nuxtlink to="/" /> will be routed to /index/index.vue
+
+

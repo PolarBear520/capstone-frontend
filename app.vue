@@ -1,6 +1,12 @@
 <template>
   <div>
-    <NuxtLink to="/"></NuxtLink>
-    <NuxtPage />
+    <NuxtLayout>
+      <v-app>
+        <!-- <NuxtPage /> -->
+        <NuxtLink to="/"></NuxtLink>
+        <NuxtPage />
+      </v-app>
+    </NuxtLayout>
+
   </div>
 </template>

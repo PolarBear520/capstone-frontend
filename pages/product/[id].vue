@@ -1,3 +1,6 @@
 <template>
-    this is a product page
+  <AppHeader></AppHeader>
+  <AppSearch></AppSearch>
+  <AppProduct></AppProduct>
+  <AppBottom></AppBottom>
 </template>

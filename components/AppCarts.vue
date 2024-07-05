@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import products from "~/mockdatabase/products";
 
 const router = useRouter();
-let cartList = reactive({ products: [] });
+let cartList = reactive([]);
 cartList = await fetchCartList();
 
 // TODO get cart items from backend
@@ -12,26 +12,21 @@ async function fetchCartList() {
     const response = await useFetch(
       "https://dummyjson.com/products?limit=3&skip=3"
     );
-    const cartListConst = response.data; 
+    const cartListConst = response.data;
 
     if (
       cartListConst &&
       cartListConst.value.products &&
       Array.isArray(cartListConst.value.products)
     ) {
-      return {
-        products: cartListConst.value.products.map((product) => ({
-          ...product,
-          checked: false,
-        })),
-      };
+      return cartListConst.value.products;
     } else {
       console.error("Products is undefined or not an array");
-      return { products: [] }; 
+      return [];
     }
   } catch (error) {
     console.error("Error fetching products:", error);
-    return { products: [] };
+    return [];
   }
 }
 
@@ -51,18 +46,17 @@ const handleSelectAll = (event) => {
   console.log(event.target.checked);
 
   const ischecked = event.target.checked;
-  cartList.products.forEach((item) => {
+  cartList.forEach((item) => {
     item.checked = ischecked;
   });
-  console.log(cartList.products);
+  console.log(cartList);
 
   //TODO calculate total  price
 };
 
 const handleSelect = (item) => {
-  item.checked = !item.checked;
   console.log(item.checked);
-  item.title="test";
+  item.title = "test";
   //TODO calculate total  price
 };
 </script>
@@ -81,12 +75,12 @@ const handleSelect = (item) => {
           <label>Select All</label>
         </div>
         <div>
-          <div class="checkboxGroup" v-for="item in cartList.products">
+          <div class="checkboxGroup" v-for="item in cartList">
             <div class="w-3/4 flex justify-items-start items-center">
               <v-checkbox
                 color="info"
                 hide-details
-                :value="`${item.checked}`"
+                v-model="item.checked"
                 @change="handleSelect(item)"
               ></v-checkbox>
               <a :href="`/product/${item.id}`">

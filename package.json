@@ -12,6 +12,7 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@nuxt/ui": "^2.16.0",
+    "axios": "^1.7.2",
     "flowbite": "^2.3.0",
     "flowbite-vue": "^0.1.5",
     "nuxt": "^3.12.1",

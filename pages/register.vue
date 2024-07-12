@@ -77,6 +77,28 @@ export default {
 
 <style scoped>
 .register-form-container {
-  /* 根据需要调整样式 */
+    max-width: 500px;
+    margin: 100px auto;
+    padding: 40px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 768px) {
+    .register-form-container {
+        max-width: 90%;
+        margin: 50px auto;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-form-container {
+        max-width: 100%;
+        margin: 20px auto;
+        padding: 20px;
+    }
 }
 </style>

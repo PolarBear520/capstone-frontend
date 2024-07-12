@@ -1,10 +1,9 @@
 <template>
   <AppHeader></AppHeader>
-
   <AppBanner />
 
   <!-- 重置密码表单 -->
-  <div class="reset-password-container mx-auto max-w-md p-6 bg-white shadow-md rounded mt-10 mb-10">
+  <div class="reset-password-container mx-auto max-w-lg p-6 bg-white shadow-md rounded mt-20 mb-20">
     <h2 class="text-2xl font-bold text-center mb-6">Let's reset your password</h2>
     <form @submit.prevent="sendResetLink">
       <div class="mb-4">
@@ -53,6 +52,28 @@ export default {
 
 <style scoped>
 .reset-password-container {
-    /* Customize the style to match your design needs */
+    max-width: 600px;  /* 调整宽度以便居中显示更多内容 */
+    margin: 100px auto;  /* 增加顶部和底部的外边距，使其在视觉上更加居中 */
+    padding: 50px;  /* 增加内边距，使表单元素间有更多空间 */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 991px) {  /* 适应中小屏幕 */
+    .reset-password-container {
+        max-width: 90%;
+        margin: 50px auto;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 600px) {  /* 适应小型设备 */
+    .reset-password-container {
+        max-width: 100%;
+        margin: 20px auto;
+        padding: 20px;
+    }
 }
 </style>

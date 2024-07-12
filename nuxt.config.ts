@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { defineStore } from 'pinia'
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
@@ -18,6 +19,10 @@ export default defineNuxtConfig({
 
   modules: [
     "@nuxt/ui",
+    'arco-design-nuxt-module',
+    'nuxt-lodash',
+    '@pinia-plugin-persistedstate/nuxt',
+    '@pinia/nuxt',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
@@ -31,6 +36,12 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
+  },
+  pinia:{
+    autoImports:[defineStore],
+  },
+  imports:{
+    dirs:["./stores"],
   },
 
 

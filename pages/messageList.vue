@@ -1,25 +1,26 @@
 <template>
   <AppHeader></AppHeader>
 
-  <div class="message-list-container mx-auto p-8 bg-white shadow-md rounded mt-10 mb-10">
-    <div class="message-item" v-for="(seller, index) in sellers" :key="index">
-      <div class="profile-section">
-        <div class="profile-pic-placeholder"></div>
-        <p class="seller-name">Seller {{ index + 1 }}</p>
-      </div>
-      <div class="message-content">
-        <p>message</p>
+  <div class="chat-list-container mx-auto p-8 bg-white shadow-md rounded mt-10 mb-10">
+    <h2 class="text-2xl font-bold text-center mb-12">Your Conversations</h2>
+    <div class="conversations">
+      <div v-for="(message, index) in latestMessages" :key="index" class="conversation">
+        <div class="conversation-header">
+          <p class="username">{{ getOtherUser(message) }}</p>
+          <p class="timestamp">{{ message.timestamp }}</p>
+        </div>
+        <p class="message-preview">{{ message.content }}</p>
       </div>
     </div>
-    <router-link to="/next-page" class="next-page">Next page</router-link>
   </div>
 
   <AppBottom></AppBottom>
 </template>
 
 <script>
-import AppHeader from '@/components/AppHeader'
-import AppBottom from '@/components/AppBottom'
+import axios from 'axios';
+import AppHeader from '@/components/AppHeader';
+import AppBottom from '@/components/AppBottom';
 
 export default {
   components: {
@@ -28,61 +29,87 @@ export default {
   },
   data() {
     return {
-      sellers: [1, 2, 3, 4] // 示例数据，实际数据可以从 API 获取
+      messages: [], // 用于存储获取的消息
+      latestMessages: [], // 用于存储每个对话的最新消息
+      userId: 1 // 当前登录用户 ID，应动态设置
     };
+  },
+  mounted() {
+    this.getMessages();
+  },
+  methods: {
+    getMessages() {
+      axios.get(`/api/messages/user/${this.userId}`)
+        .then(response => {
+          this.messages = response.data;
+          this.extractLatestMessages();
+        })
+        .catch(error => {
+          console.error('Error fetching messages:', error);
+        });
+    },
+    extractLatestMessages() {
+      const conversations = {};
+
+      // 将每条消息分类到每个对话中
+      this.messages.forEach(message => {
+        const otherUserId = message.sender_id === this.userId ? message.receiver_id : message.sender_id;
+        if (!conversations[otherUserId] || new Date(message.timestamp) > new Date(conversations[otherUserId].timestamp)) {
+          conversations[otherUserId] = message;
+        }
+      });
+
+      // 获取每个对话的最新消息
+      this.latestMessages = Object.values(conversations);
+    },
+    getOtherUser(message) {
+      return message.sender_id === this.userId ? `User ${message.receiver_id}` : `User ${message.sender_id}`;
+    }
   }
 };
 </script>
 
 <style scoped>
-.message-list-container {
+.chat-list-container {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1200px; /* 根据需要调整最大宽度 */
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px; /* 增加内容的填充 */
-  height: auto; /* 根据内容自动调整高度 */
+  padding: 20px;
 }
-.message-item {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 40px; /* 每个消息项之间的间距 */
-  padding: 20px; /* 增加内容的填充 */
-  border: 1px solid #ddd; /* 增加边框使其更明显 */
+
+.conversations {
+  flex-grow: 1;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
 }
-.profile-section {
+
+.conversation {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-right: 20px; /* 与消息内容的间距 */
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
 }
-.profile-pic-placeholder {
-  width: 80px; /* 两倍宽度 */
-  height: 80px; /* 两倍高度 */
-  border-radius: 50%;
-  background-color: black; /* 黑色圆圈 */
+
+.conversation-header {
+  display: flex;
+  justify-content: space-between;
 }
-.seller-name {
-  font-size: 18px; /* 字体大小 */
-  color: #333; /* 字体颜色 */
-  text-align: center; /* 居中对齐 */
-  margin-top: 10px; /* 与头像的间距 */
+
+.username {
+  font-size: 16px;
+  color: #333;
 }
-.message-content {
-  flex-grow: 1;
-  padding: 20px; /* 两倍填充 */
-  border-radius: 10px;
-  background-color: #f0f0f0;
+
+.timestamp {
+  font-size: 14px;
+  color: #999;
 }
-.next-page {
-  display: block;
-  text-align: center;
-  margin-top: 20px;
-  color: #007BFF;
-  text-decoration: none;
-}
-.next-page:hover {
-  text-decoration: underline;
+
+.message-preview {
+  font-size: 14px;
+  color: #666;
 }
 </style>

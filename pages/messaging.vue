@@ -9,10 +9,10 @@
           <div class="profile-pic-placeholder"></div>
           <p class="seller-name">Seller</p>
         </div>
-        <p class="message-content">Hello! How can I help you?</p>
+        <div class="message-content">Hello! How can I help you?</div>
       </div>
       <div class="message from-buyer">
-        <p class="message-content">Your message here...</p>
+        <div class="message-content">Your message here...</div>
         <div class="profile-section">
           <div class="profile-pic-placeholder"></div>
           <p class="seller-name">Buyer</p>
@@ -22,8 +22,8 @@
     </div>
     <div class="send-message">
       <input type="file" class="upload-image">
-      <textarea placeholder="Type your message..."></textarea>
-      <button class="send-button">Send</button>
+      <textarea v-model="newMessage" placeholder="Type your message..."></textarea>
+      <button @click="sendMessage" class="send-button">Send</button>
     </div>
     <router-link to="/message-list" class="back-to-list">Go back to message list</router-link>
   </div>
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import AppHeader from '@/components/AppHeader'
 import AppBottom from '@/components/AppBottom'
 
@@ -39,6 +40,28 @@ export default {
   components: {
     AppHeader,
     AppBottom
+  },
+  data() {
+    return {
+      newMessage: '', // 用于绑定到 textarea 以获取消息输入
+    };
+  },
+  methods: {
+    sendMessage() {
+      const messageData = {
+        sender_id: 1,  // 示例发送者 ID，应该根据实际用户动态设置
+        receiver_id: 2, // 示例接收者 ID，也应动态设置
+        content: this.newMessage
+      };
+      axios.post('/api/messages', messageData)
+        .then(response => {
+          console.log('Message sent successfully', response.data);
+          this.newMessage = ''; // 发送后清空消息输入框
+        })
+        .catch(error => {
+          console.error('Error sending message:', error);
+        });
+    }
   }
 };
 </script>
@@ -48,80 +71,80 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1200px; /* 调整最大宽度 */
+  max-width: 1000px; 
   margin: 0 auto;
-  padding: 20px; /* 调整内容的填充 */
-  height: auto; /* 自动调整高度 */
+  padding: 20px;
+  overflow-y: auto;
 }
+
 .messages {
   overflow-y: auto;
-  flex-grow: 1; /* 使消息区域在可用空间中扩展 */
-  margin-bottom: 20px; /* 保持与发送消息区域的间距 */
+  flex-grow: 1;
+  background-color: #f9f9f9; 
+  padding: 20px;
+  border-radius: 8px; 
 }
+
 .message {
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 40px; /* 增加间距 */
+  justify-content: flex-start; 
+  margin-bottom: 15px;
 }
+
+.from-seller {
+  flex-direction: row;
+}
+
+.from-buyer {
+  flex-direction: row-reverse; 
+}
+
 .profile-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-right: 20px; /* 与消息内容的间距 */
+  padding: 0 10px;
 }
+
 .profile-pic-placeholder {
-  width: 80px; /* 两倍宽度 */
-  height: 80px; /* 两倍高度 */
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background-color: black; /* 黑色圆圈 */
+  background-color: #bbb; 
 }
-.seller-name {
-  font-size: 18px; /* 字体大小 */
-  color: #333; /* 字体颜色 */
-  text-align: center; /* 居中对齐 */
-  margin-top: 10px; /* 与头像的间距 */
+
+.seller-name, .buyer-name {
+  font-size: 16px;
+  color: #333;
 }
+
 .message-content {
-  max-width: 60%;
-  padding: 20px; /* 两倍填充 */
-  border-radius: 10px;
-  background-color: #f0f0f0;
-  margin: 0 20px; /* 与头像的间距 */
+  padding: 10px 15px;
+  background-color: #e0e0e0; 
+  border-radius: 15px; 
+  max-width: 80%; 
+  word-wrap: break-word; 
 }
+
 .send-message {
   display: flex;
   align-items: center;
-  margin-bottom: 20px; /* 增加与底部按钮的间距 */
 }
+
 .upload-image {
-  margin-right: 20px; /* 调整为在输入框左边 */
+  margin-right: 10px;
 }
+
 textarea {
-  width: 100%;
-  height: 150px; /* 调整高度 */
-  padding: 20px; /* 调整填充 */
-  margin-right: 20px; /* 增加间距 */
-  resize: none;
+  flex-grow: 1;
+  margin-right: 10px;
 }
+
 .send-button {
-  background-color: #007BFF;
-  color: white;
-  padding: 20px 40px; /* 调整填充 */
-  border: none;
-  border-radius: 10px; /* 调整圆角 */
-  cursor: pointer;
+  min-width: 80px;
 }
-.send-button:hover {
-  background-color: #0056b3;
-}
+
 .back-to-list {
-  display: block;
-  text-align: center;
-  margin-top: 20px;
-  color: #007BFF;
   text-decoration: none;
-}
-.back-to-list:hover {
-  text-decoration: underline;
 }
 </style>

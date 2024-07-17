@@ -10,6 +10,18 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
 
+  runtimeConfig: {
+    // Keys within public, will be also exposed to the client-side
+    public: {
+      apiBase: 'https://dummyjson.com'
+    }
+  },
+
+  sourcemap: {
+    server: true,
+    client: true
+  },
+
   postcss: {
     plugins: {
       tailwindcss: {},

@@ -32,7 +32,15 @@
 
 <script setup>
 import { FwbCarousel } from "flowbite-vue";
-const { data: product } = await useFetch("https://dummyjson.com/products/6");
+import { useRouter } from "vue-router";
+
+const route = useRoute()
+const id = route.params.id
+
+const {productApi} = useApi();
+const { data:product } = await useAsyncData( () => productApi.getById(id))
+// const { data: product } = await useFetch("https://dummyjson.com/products/6");
+
 
 </script>
 <style scoped>

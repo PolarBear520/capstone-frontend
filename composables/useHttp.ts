@@ -69,7 +69,8 @@ const fetch = $fetch.create({
     if (response.headers.get('content-disposition') && response.status === 200)
       return response
     // 在这里判断错误
-    if (response._data.code !== 200) {
+    // if (response._data.code !== 200) {// TODO, according to backend
+    if (response.status !== 200) {
       handleError(response)
       return Promise.reject(response._data)
     }

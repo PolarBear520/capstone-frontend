@@ -76,10 +76,52 @@
 <script lang="ts" setup>
 import { FwbAvatar } from "flowbite-vue";
 import AppSearch from "./AppSearch.vue";
-const { data: productList } = await useFetch(
-  "https://dummyjson.com/products?limit=24&skip=24"
-);
-console.log(productList);
+import type { ProductResultModel } from "~/apis/product";
+
+// const { data: productList } = await useFetch(
+//     "https://dummyjson.com/products?limit=24&skip=24"
+//   );
+
+const skip = ref(0)
+const limit = 24
+const { productApi } = useApi()
+
+const productList = ref<ProductResultModel>({
+  products: [],
+  total: 0,
+  skip: 0,
+  limit: 24,
+})
+
+const fetchProducts = async (skip: number, limit: number) => {
+  const params = { skip, limit }
+  const { data } = await useAsyncData('product-list', () => productApi.list(params))
+  return data.value as ProductResultModel
+}
+
+// 初始化加载数据
+const initialLoad = async () => {
+  const data = await fetchProducts(0, 24)
+  productList.value = data
+}
+
+await initialLoad()
+
+// 加载更多数据
+const clickShowMoreProducts = async () => {
+  
+  if(productList.value.skip>=productList.value.total){
+    return
+  }
+  skip.value = productList.value.skip + productList.value.limit
+  
+  const data = await fetchProducts(skip.value, productList.value.limit)
+
+  productList.value.products.push(...data.products)
+  productList.value.skip = data.skip
+  productList.value.total = data.total
+}
+
 
 //TODO: get wishlist from backend
 const wishList = reactive([25, 33]);
@@ -94,6 +136,7 @@ const clickWishlist = (id) => {
     // TODO: add to backend
   }
 };
+
 </script>
 
 <style scoped>

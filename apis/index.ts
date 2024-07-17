@@ -1,9 +1,7 @@
-import * as login from './login'
-import * as sys from './sys'
+import * as loginApi from './login'
 import * as productApi from './product'
 
 export default {
-  login,
-  sys,
+  loginApi,
   productApi,
 }

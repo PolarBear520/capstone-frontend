@@ -4,14 +4,14 @@ import type { LoginParams, LoginResultModel } from '~/apis/login'
 function storeSetup() {
   const userInfo = ref<LoginResultModel>()
   const getUserInfo = computed(() => userInfo.value)
-  const isLogin = computed(() => !!userInfo.value?.remember_token)
-  const getToken = computed(() => userInfo.value?.remember_token)
+  const isLogin = computed(() => !!userInfo.value?.token)
+  const getToken = computed(() => userInfo.value?.token)
   const setUserInfo = (info: LoginResultModel) => {
     userInfo.value = info
   }
   const login = async (params: LoginParams) => {
-    const { login } = useApi()
-    const { data } = await login.login(params)
+    const { loginApi } = useApi()
+    const { data } = await loginApi.login(params)
     userInfo.value = data
     return data
   }
@@ -19,8 +19,8 @@ function storeSetup() {
     userInfo.value = undefined
   }
   const logout = async () => {
-    const { login } = useApi()
-    await login.logout()
+    const { loginApi } = useApi()
+    await loginApi.logout()
     clearUserInfo()
   }
 

@@ -2,7 +2,7 @@
   <div>
     <div class="navigations">
       <div class="nav-top-left">
-        <span>Hi <a href="">Sign in </a> or <a href="">register</a> </span>
+        <span>Hi <a href="/login">Sign in </a> or <a href="/register">register</a> </span>
       </div>
 
       <div class="nav-top-right flex">
@@ -12,7 +12,7 @@
         <v-menu open-on-hover>
           <template v-slot:activator="{ props }">
             <span v-bind="props"
-              >My eBay
+              >My TriVote
               <v-icon icon="mdi-chevron-down"></v-icon>
             </span>
           </template>
@@ -20,19 +20,19 @@
           <v-list>
             <v-list-item>
               <v-list-item-title>
-                <a href="">My Account</a>
+                <a href="/userProfile">My Account</a>
               </v-list-item-title>
               <v-list-item-title>
-                <a href="">Watch List</a>
+                <a href="/watch-list">Watch List</a>
               </v-list-item-title>
               <v-list-item-title>
-                <a href="">My Order</a>
+                <a href="/myOrder">My Order</a>
               </v-list-item-title>
               <v-list-item-title>
-                <a href="">Message</a>
+                <a href="/messageList">Message</a>
               </v-list-item-title>
               <v-list-item-title>
-                <a href="">Logout</a>
+                <a href="" @click="clickToLogout()">Logout</a>
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -59,6 +59,11 @@ const clickGoToCarts = () => {
   // open cart page
   window.open("/carts", "_blank");
 };
+const clickToLogout = () => {
+  // todo
+};
+
+
 </script>
 
 <style scoped>

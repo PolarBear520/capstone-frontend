@@ -34,10 +34,16 @@ import AppHeader from '@/components/AppHeader';
 import AppBanner from '@/components/AppBanner';
 import AppBottom from '@/components/AppBottom';
 import axios from 'axios';
+// import { useUserStore } from '~/stores/user.store'
+import { useRouter } from "vue-router";
+
+// const userStore = useUserStore()
+const router=useRouter()
 
 export default {
   components: {
     AppHeader,
+
     AppBanner,
     AppBottom
   },
@@ -56,8 +62,16 @@ export default {
           email: this.credentials.email,
           password: this.credentials.password
         });
+
+        // const response= await userStore.login({
+        //   email: this.credentials.email,
+        //   password: this.credentials.password
+        // })
+        
         console.log('Login successful:', response);
         alert('Login successful');
+
+        router.push("/");
       } catch (error) {
         console.error('Login error:', error);
         alert('Login failed');

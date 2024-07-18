@@ -66,7 +66,7 @@ export interface Review {
 }
 
 enum Api {
-  list = '/products',
+  list = 'https://dummyjson.com/products',
 }
 
 export async function list(params: ListParams) {

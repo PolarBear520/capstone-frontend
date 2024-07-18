@@ -1,7 +1,6 @@
 export interface LoginParams {
-  mobile: number
-  user_pass?: string
-  sms_code?: number
+  email: string
+  password: string
 }
 export interface Orders {
   user_id: number
@@ -19,34 +18,12 @@ export interface Vip_type {
 }
 
 export interface LoginResultModel {
-  id: number
-  user_name: string
-  real_name: string
-  user_nickname: string
-  mobile: string
-  status: string
-  sex: string
-  last_login_ip: string
-  last_login_time: number
-  birthday: string
-  avatar: string
-  avatar_frame: string
-  grade_id: string
-  province_id: number
-  city_id: number
-  area_id: number
-  score: number
-  days: number
-  updated_at: string
-  orders: Orders[]
-  vip_type: Vip_type
-  isSimplePwd: boolean
-  remember_token: string
+  token: string
 }
 enum Api {
-  login = '/users/app/login',
-  logout = '/users/app/logout',
-  getUserInfo = '/users/app/getUserInfo',
+  login = 'http://localhost:8081/api/users/login',
+  logout = 'http://localhost:8081/api/users/logout',
+  getUserInfo = '/api/users/getUserInfo',
 }
 
 // option就是useFetch的选项参数

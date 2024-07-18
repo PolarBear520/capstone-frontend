@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Keys within public, will be also exposed to the client-side
     public: {
-      apiBase: 'https://dummyjson.com'
+      apiBase: ''
     }
   },
 

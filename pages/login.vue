@@ -30,10 +30,10 @@
 </template>
 
 <script>
-import AppHeader from '@/components/AppHeader'
-import AppBanner from '@/components/AppBanner'
-import AppBottom from '@/components/AppBottom'
-import axios from 'axios'
+import AppHeader from '@/components/AppHeader';
+import AppBanner from '@/components/AppBanner';
+import AppBottom from '@/components/AppBottom';
+import axios from 'axios';
 
 export default {
   components: {
@@ -50,16 +50,18 @@ export default {
     };
   },
   methods: {
-    login() {
-      axios.post('/api/login', this.credentials)
-      .then(response => {
+    async login() {
+      try {
+        const response = await axios.post('http://localhost:8081/api/users/login', {
+          email: this.credentials.email,
+          password: this.credentials.password
+        });
         console.log('Login successful:', response);
         alert('Login successful');
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Login error:', error);
         alert('Login failed');
-      });
+      }
     }
   }
 }

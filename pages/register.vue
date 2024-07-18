@@ -30,10 +30,10 @@
 </template>
 
 <script>
-import AppHeader from '@/components/AppHeader'
-import AppBanner from '@/components/AppBanner'
-import AppBottom from '@/components/AppBottom'
-import axios from 'axios'
+import AppHeader from '@/components/AppHeader';
+import AppBanner from '@/components/AppBanner';
+import AppBottom from '@/components/AppBottom';
+import axios from 'axios';
 
 export default {
   components: {
@@ -52,24 +52,24 @@ export default {
     }
   },
   methods: {
-    submitRegistration() {
+    async submitRegistration() {
       if (this.user.password !== this.user.confirmPassword) {
         alert("Passwords do not match!");
         return;
       }
-      axios.post('/api/register', {
-        username: this.user.username,
-        email: this.user.email,
-        password: this.user.password
-      })
-      .then(response => {
+
+      try {
+        const response = await axios.post('http://localhost:8081/api/users/register', {
+          email: this.user.email,
+          username: this.user.username,
+          password: this.user.password
+        });
         console.log(response);
         alert('Registration successful');
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('There was an error registering the user:', error);
         alert('Registration failed');
-      });
+      }
     }
   }
 }

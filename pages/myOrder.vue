@@ -6,7 +6,7 @@
     <div class="navigation-panel bg-white shadow-lg">
       <h2 class="text-lg font-semibold p-4 border-b">My Orders</h2>
       <div class="flex flex-col p-4">
-        <router-link to="/my-orders" class="mb-2 p-2 rounded text-left hover:bg-gray-100 block">My Orders</router-link>
+        <router-link to="/myOder" class="mb-2 p-2 rounded text-left hover:bg-gray-100 block">My Orders</router-link>
         <router-link to="/my-selling-list" class="mb-2 p-2 rounded text-left hover:bg-gray-100 block">My Selling List</router-link>
         <router-link to="/start-selling" class="mb-2 p-2 rounded text-left hover:bg-gray-100 block">Start Selling</router-link>
         <router-link to="/watch-list" class="mb-2 p-2 rounded text-left hover:bg-gray-100 block">My Watch List</router-link>

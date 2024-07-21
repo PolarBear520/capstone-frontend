@@ -4,56 +4,59 @@
   <div class="flex">
     <!-- 左侧导航按钮 -->
     <div class="navigation-panel bg-white shadow-lg">
-      <h2 class="text-lg font-semibold p-4 border-b">My selling list</h2>
+      <h2 class="text-lg font-semibold p-4 border-b">Navigation</h2>
       <div class="flex flex-col p-4">
-        <button class="mb-2 p-2 rounded text-left hover:bg-gray-100">My order</button>
-        <button class="mb-2 p-2 rounded text-left hover:bg-gray-100">My selling list</button>
-        <button class="mb-2 p-2 rounded text-left hover:bg-gray-100">Start a selling</button>
-        <button class="mb-2 p-2 rounded text-left hover:bg-gray-100">My watch list</button>
+        <router-link to="/myOrder" class="mb-2 p-2 rounded text-left hover:bg-gray-100 block">My Orders</router-link>
+        <router-link to="/my-selling-list" class="mb-2 p-2 rounded text-left hover:bg-gray-100 block">My Selling List</router-link>
+        <router-link to="/start-selling" class="mb-2 p-2 rounded text-left hover:bg-gray-100 block">Start Selling</router-link>
       </div>
     </div>
 
     <!-- 竖线分隔 -->
     <div class="divider bg-gray-300" style="width: 1px;"></div>
 
-    <!-- 右侧销售列表 -->
-    <div class="selling-list flex-grow p-4">
-      <div v-for="item in sellingItems" :key="item.id" class="item-card p-4 border rounded mb-4 flex">
-        <img :src="item.image" alt="Product Image" class="w-32 h-32 mr-4">
+    <!-- 右侧订单列表 -->
+    <div class="orders-list flex-grow p-4">
+      <div v-for="order in orders" :key="order.id" class="order-card p-4 border rounded mb-4 flex" @click="goToProductPage(order.product.productId)">
+        <!-- 如果有产品图片，替换掉占位符URL -->
+        <img src="https://via.placeholder.com/150" alt="Product Image" class="w-32 h-32 mr-4">
         <div>
-          <h3 class="font-bold">{{ item.name }}</h3>
-          <p>Item ID: {{ item.id }}</p>
-          <p>{{ item.price }}</p>
-          <p>{{ item.pickupOption }}</p>
+          <h3 class="font-bold">{{ order.product.productName }}</h3>
+          <p>Order ID: {{ order.id }}</p>
+          <p>Product ID: {{ order.product.productId }}</p>
+          <p>Buyer ID: {{ order.buyerId }}</p>
+          <p>Order Date: {{ new Date(order.orderDate).toLocaleString() }}</p>
+          <p>Status: {{ order.status }}</p>
         </div>
       </div>
-      <p class="text-center">you have reached the bottom</p>
     </div>
   </div>
 
   <AppBottom></AppBottom>
 </template>
 
-<script>
-import AppHeader from '@/components/AppHeader'
-import AppBottom from '@/components/AppBottom'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import AppHeader from '@/components/AppHeader';
+import AppBottom from '@/components/AppBottom';
 
-export default {
-  components: {
-    AppHeader,
-    AppBottom
-  },
-  data() {
-    return {
-      sellingItems: [
-        { id: '1265159511112', name: 'phone', image: 'path/to/phone.jpg', price: '$5', pickupOption: 'Local pickup' },
-        { id: '1265159511113', name: 'item name', image: 'path/to/item1.jpg', price: '$5', pickupOption: 'Local pickup' },
-        { id: '1265159511115', name: 'item name', image: 'path/to/item2.jpg', price: '$5', pickupOption: 'Local pickup' },
-        // 更多物品...
-      ]
-    };
+const orders = ref([]);
+const router = useRouter();
+
+const goToProductPage = (productId: number) => {
+  router.push(`/product/${productId}`);
+};
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('http://localhost:8081/api/orders/my-orders');
+    orders.value = response.data;
+  } catch (error) {
+    console.error('Failed to fetch orders:', error);
   }
-}
+});
 </script>
 
 <style scoped>
@@ -66,12 +69,13 @@ export default {
   height: 100vh;
 }
 
-.selling-list {
+.orders-list {
   flex: 1;
 }
 
-.item-card {
+.order-card {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 </style>

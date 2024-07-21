@@ -6,7 +6,7 @@
       </div>
 
       <div class="nav-top-right flex">
-        <span>Sell</span>
+        <span @click="goToStartSelling">Sell</span>
         <span>|</span>
 
         <v-menu open-on-hover>
@@ -23,7 +23,7 @@
                 <a href="/userProfile">My Account</a>
               </v-list-item-title>
               <v-list-item-title>
-                <a href="/watch-list">Watch List</a>
+                <a href="/my-selling-list">Selling List</a>
               </v-list-item-title>
               <v-list-item-title>
                 <a href="/myOrder">My Order</a>
@@ -37,14 +37,6 @@
             </v-list-item>
           </v-list>
         </v-menu>
-        <div class="badgeContainer cursor-pointer">
-          <v-badge color="red" right @click="clickGoToCarts()">
-            <template v-slot:badge>
-              <span>{{ state.cartCount }}</span>
-            </template>
-            <v-icon icon="mdi-cart-outline" large> </v-icon>
-          </v-badge>
-        </div>
       </div>
     </div>
     <v-divider :thickness="5"></v-divider>
@@ -53,17 +45,18 @@
 
 <script setup>
 import { inject } from "vue";
-const state = inject("state");
+import { useRouter } from 'vue-router';
 
-const clickGoToCarts = () => {
-  // open cart page
-  window.open("/carts", "_blank");
-};
+const state = inject("state");
+const router = useRouter();
+
 const clickToLogout = () => {
   // todo
 };
 
-
+const goToStartSelling = () => {
+  router.push('/start-selling');
+};
 </script>
 
 <style scoped>
@@ -89,7 +82,6 @@ a {
 span {
   padding: 5px;
   font-family: Helvetica, sans-serif;
-  /* font-size: 12px; */
   justify-items: center;
 }
 
@@ -107,7 +99,6 @@ span {
 
 .nav-top-right {
   flex-wrap: wrap;
-  /* Allows items to wrap in smaller screens */
 }
 
 .nav-top-left-opt {
@@ -230,13 +221,6 @@ li {
 
 .not-selected {
   margin-top: 10px;
-}
-
-.badge {
-  background-color: red;
-  color: white;
-  border-radius: 12px;
-  font-size: 12px;
 }
 
 .badgeContainer {

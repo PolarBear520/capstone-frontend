@@ -4,19 +4,28 @@
   <div class="chat-container mx-auto p-8 bg-white shadow-md rounded mt-10 mb-10">
     <h2 class="text-2xl font-bold text-center mb-12">You are talking to "seller name"...</h2>
     <div class="messages">
-      <div v-for="message in messages" :key="message.id" :class="['message', { 'from-seller': message.senderId === sellerId, 'from-buyer': message.senderId === buyerId }]">
+      <div class="message from-seller">
         <div class="profile-section">
           <div class="profile-pic-placeholder"></div>
-          <p class="sender-name">{{ message.senderId === sellerId ? 'Seller' : 'Buyer' }}</p>
+          <p class="seller-name">Seller</p>
         </div>
-        <div class="message-content">{{ message.content }}</div>
+        <div class="message-content">Hello! How can I help you?</div>
       </div>
+      <div class="message from-buyer">
+        <div class="message-content">Your message here...</div>
+        <div class="profile-section">
+          <div class="profile-pic-placeholder"></div>
+          <p class="seller-name">Buyer</p>
+        </div>
+      </div>
+      <!-- More messages can be added here -->
     </div>
     <div class="send-message">
+      <input type="file" class="upload-image">
       <textarea v-model="newMessage" placeholder="Type your message..."></textarea>
       <button @click="sendMessage" class="send-button">Send</button>
     </div>
-    <router-link to="/messageList" class="back-to-list">Go back to message list</router-link>
+    <router-link to="/message-list" class="back-to-list">Go back to message list</router-link>
   </div>
 
   <AppBottom></AppBottom>
@@ -26,7 +35,6 @@
 import axios from 'axios';
 import AppHeader from '@/components/AppHeader'
 import AppBottom from '@/components/AppBottom'
-import { useRoute } from 'vue-router';
 
 export default {
   components: {
@@ -36,41 +44,23 @@ export default {
   data() {
     return {
       newMessage: '', // 用于绑定到 textarea 以获取消息输入
-      messages: [], // 用于存储会话的全部消息
-      sellerId: 2, // 示例卖家 ID，应根据实际情况动态设置
-      buyerId: 1 // 示例买家 ID，应根据实际情况动态设置
     };
   },
-  async mounted() {
-    const route = useRoute();
-    const conversationId = route.query.conversationId;
-    await this.getConversationMessages(conversationId);
-  },
   methods: {
-    async getConversationMessages(conversationId) {
-      try {
-        const response = await axios.get(`/api/conversations/${conversationId}`);
-        this.messages = response.data;
-      } catch (error) {
-        console.error('Error fetching conversation messages:', error);
-      }
-    },
-    async sendMessage() {
-      const route = useRoute();
-      const conversationId = route.query.conversationId;
+    sendMessage() {
       const messageData = {
-        senderId: this.buyerId,  // 示例发送者 ID，应该根据实际用户动态设置
-        conversationId: conversationId, // 使用传入的会话 ID
+        sender_id: 1,  // 示例发送者 ID，应该根据实际用户动态设置
+        receiver_id: 2, // 示例接收者 ID，也应动态设置
         content: this.newMessage
       };
-      try {
-        const response = await axios.post('/api/messages', messageData);
-        console.log('Message sent successfully', response.data);
-        this.newMessage = ''; // 发送后清空消息输入框
-        await this.getConversationMessages(messageData.conversationId); // 重新获取消息
-      } catch (error) {
-        console.error('Error sending message:', error);
-      }
+      axios.post('/api/messages', messageData)
+        .then(response => {
+          console.log('Message sent successfully', response.data);
+          this.newMessage = ''; // 发送后清空消息输入框
+        })
+        .catch(error => {
+          console.error('Error sending message:', error);
+        });
     }
   }
 };
@@ -123,7 +113,7 @@ export default {
   background-color: #bbb; 
 }
 
-.sender-name {
+.seller-name, .buyer-name {
   font-size: 16px;
   color: #333;
 }
@@ -139,6 +129,10 @@ export default {
 .send-message {
   display: flex;
   align-items: center;
+}
+
+.upload-image {
+  margin-right: 10px;
 }
 
 textarea {

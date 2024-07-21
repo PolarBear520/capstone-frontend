@@ -4,12 +4,12 @@
   <div class="chat-list-container mx-auto p-8 bg-white shadow-md rounded mt-10 mb-10">
     <h2 class="text-2xl font-bold text-center mb-12">Your Conversations</h2>
     <div class="conversations">
-      <div v-for="(message, index) in latestMessages" :key="index" class="conversation">
+      <div v-for="(conversation, index) in latestConversations" :key="index" class="conversation" @click="goToMessaging(conversation.id)">
         <div class="conversation-header">
-          <p class="username">{{ getOtherUser(message) }}</p>
-          <p class="timestamp">{{ message.timestamp }}</p>
+          <p class="username">{{ getOtherUser(conversation) }}</p>
+          <p class="timestamp">{{ conversation.latestMessage.timestamp }}</p>
         </div>
-        <p class="message-preview">{{ message.content }}</p>
+        <p class="message-preview">{{ conversation.latestMessage.content }}</p>
       </div>
     </div>
   </div>
@@ -19,6 +19,7 @@
 
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 import AppHeader from '@/components/AppHeader';
 import AppBottom from '@/components/AppBottom';
 
@@ -29,41 +30,42 @@ export default {
   },
   data() {
     return {
-      messages: [], // 用于存储获取的消息
-      latestMessages: [], // 用于存储每个对话的最新消息
+      conversations: [], // 用于存储获取的会话
+      latestConversations: [], // 用于存储每个会话的最新消息
       userId: 1 // 当前登录用户 ID，应动态设置
     };
   },
   mounted() {
-    this.getMessages();
+    this.getConversations();
   },
   methods: {
-    getMessages() {
-      axios.get(`/api/messages/user/${this.userId}`)
+    getConversations() {
+      axios.get(`/api/conversations`)
         .then(response => {
-          this.messages = response.data;
+          this.conversations = response.data;
           this.extractLatestMessages();
         })
         .catch(error => {
-          console.error('Error fetching messages:', error);
+          console.error('Error fetching conversations:', error);
         });
     },
     extractLatestMessages() {
-      const conversations = {};
-
-      // 将每条消息分类到每个对话中
-      this.messages.forEach(message => {
-        const otherUserId = message.sender_id === this.userId ? message.receiver_id : message.sender_id;
-        if (!conversations[otherUserId] || new Date(message.timestamp) > new Date(conversations[otherUserId].timestamp)) {
-          conversations[otherUserId] = message;
-        }
+      this.latestConversations = this.conversations.map(conversation => {
+        const latestMessage = conversation.messages.reduce((latest, current) => {
+          return new Date(latest.timestamp) > new Date(current.timestamp) ? latest : current;
+        });
+        return {
+          ...conversation,
+          latestMessage
+        };
       });
-
-      // 获取每个对话的最新消息
-      this.latestMessages = Object.values(conversations);
     },
-    getOtherUser(message) {
-      return message.sender_id === this.userId ? `User ${message.receiver_id}` : `User ${message.sender_id}`;
+    getOtherUser(conversation) {
+      return conversation.user1Id === this.userId ? `User ${conversation.user2Id}` : `User ${conversation.user1Id}`;
+    },
+    goToMessaging(conversationId) {
+      const router = useRouter();
+      router.push({ path: '/messaging', query: { conversationId } });
     }
   }
 };
@@ -91,6 +93,7 @@ export default {
   flex-direction: column;
   border-bottom: 1px solid #ddd;
   padding: 10px 0;
+  cursor: pointer;
 }
 
 .conversation-header {

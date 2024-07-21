@@ -1,20 +1,35 @@
 <template>
-    <!-- <v-divider></v-divider> -->
     <AppHeader></AppHeader>
-    <AppSearch></AppSearch>
-    
+    <AppSearch ref="searchComponent"></AppSearch>
     <AppBanner></AppBanner>
-    <AppProducts></AppProducts>
     <AppBottom></AppBottom>
-
-</template>
-<script>
-
-export default {
-
-}
-</script>
-<style lang="">
-
-
-</style>
+  </template>
+  
+  <script>
+  import { ref, onMounted } from 'vue';
+  import AppHeader from '@/components/AppHeader';
+  import AppSearch from '@/components/AppSearch';
+  import AppBanner from '@/components/AppBanner';
+  import AppBottom from '@/components/AppBottom';
+  
+  export default {
+    setup() {
+      const searchComponent = ref(null);
+  
+      onMounted(() => {
+        if (searchComponent.value && searchComponent.value.performSearch) {
+          searchComponent.value.performSearch();
+        }
+      });
+  
+      return {
+        searchComponent,
+      };
+    },
+  };
+  </script>
+  
+  <style scoped>
+  /* 添加样式 */
+  </style>
+  

@@ -1,7 +1,6 @@
 <template>
     <AppHeader></AppHeader>
     <AppSearch ref="searchComponent"></AppSearch>
-    <AppBanner></AppBanner>
     <AppBottom></AppBottom>
   </template>
   

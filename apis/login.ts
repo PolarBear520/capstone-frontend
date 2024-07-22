@@ -18,7 +18,12 @@ export interface Vip_type {
 }
 
 export interface LoginResultModel {
-  token: string
+  token: string;
+  user: {
+    id: number;
+    email: string;
+    name: string;
+  };
 }
 enum Api {
   login = 'http://localhost:8081/api/users/login',

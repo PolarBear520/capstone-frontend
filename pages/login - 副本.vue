@@ -26,12 +26,6 @@
     </form>
   </div>
 
-  <!-- 显示当前 token 部分 -->
-  <div v-if="token" class="mt-4 mx-auto max-w-lg p-6 bg-gray-100 shadow-md rounded">
-    <h3 class="text-xl font-semibold">Current Token:</h3>
-    <p class="break-all">{{ token }}</p>
-  </div>
-
   <AppBottom></AppBottom>
 </template>
 
@@ -39,12 +33,17 @@
 import AppHeader from '@/components/AppHeader';
 import AppBanner from '@/components/AppBanner';
 import AppBottom from '@/components/AppBottom';
-import axios from '@/axios'; // 使用配置好的 axios 实例
+import axios from 'axios';
+// import { useUserStore } from '~/stores/user.store'
 import { useRouter } from "vue-router";
+
+// const userStore = useUserStore()
+const router=useRouter()
 
 export default {
   components: {
     AppHeader,
+
     AppBanner,
     AppBottom
   },
@@ -53,41 +52,31 @@ export default {
       credentials: {
         email: '',
         password: ''
-      },
-      token: null
+      }
     };
-  },
-  setup() {
-    const router = useRouter();
-    return { router };
   },
   methods: {
     async login() {
       try {
-        const response = await axios.post('/users/login', {
+        const response = await axios.post('http://localhost:8081/api/users/login', {
           email: this.credentials.email,
           password: this.credentials.password
         });
 
+        // const response= await userStore.login({
+        //   email: this.credentials.email,
+        //   password: this.credentials.password
+        // })
+        
         console.log('Login successful:', response);
+        alert('Login successful');
 
-        if (response.data && response.data.token) {
-          alert('Login successful');
-          localStorage.setItem('token', response.data.token);
-          this.token = response.data.token; // 存储 token 到 data 属性
-          this.router.push("/"); // 确保在token更新后再执行跳转
-        } else {
-          alert('Login failed: No token received');
-          console.error('Login error: No token received', response);
-        }
+        router.push("/");
       } catch (error) {
         console.error('Login error:', error);
         alert('Login failed');
       }
     }
-  },
-  mounted() {
-    this.token = localStorage.getItem('token'); // 获取存储的 token
   }
 }
 </script>

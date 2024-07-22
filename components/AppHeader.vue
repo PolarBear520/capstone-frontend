@@ -2,7 +2,13 @@
   <div>
     <div class="navigations">
       <div class="nav-top-left">
-        <span>Hi <a href="/login">Sign in </a> or <a href="/register">register</a> </span>
+        <span v-if="!isLogin">Hi <a href="/login">Sign in </a> or <a href="/register">register</a> </span>
+        <span v-else @click="goToHome">Home</span>
+      </div>
+
+      <div class="nav-middle">
+        <span v-if="isLogin">Welcome back!</span>
+        <span v-else> </span>
       </div>
 
       <div class="nav-top-right flex">
@@ -11,17 +17,11 @@
 
         <v-menu open-on-hover>
           <template v-slot:activator="{ props }">
-            <span v-bind="props"
-              >My TriVote
-              <v-icon icon="mdi-chevron-down"></v-icon>
-            </span>
+            <span v-bind="props">My TradeTrove <v-icon icon="mdi-chevron-down"></v-icon></span>
           </template>
 
           <v-list>
-            <v-list-item>
-              <v-list-item-title>
-                <a href="/userProfile">My Account</a>
-              </v-list-item-title>
+            <v-list-item v-if="isLogin">
               <v-list-item-title>
                 <a href="/my-selling-list">Selling List</a>
               </v-list-item-title>
@@ -32,7 +32,15 @@
                 <a href="/messageList">Message</a>
               </v-list-item-title>
               <v-list-item-title>
-                <a href="" @click="clickToLogout()">Logout</a>
+                <a href="" @click="clickToLogout">Logout</a>
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item v-else>
+              <v-list-item-title>
+                <a href="/login">Sign in</a>
+              </v-list-item-title>
+              <v-list-item-title>
+                <a href="/register">Register</a>
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -44,19 +52,34 @@
 </template>
 
 <script setup>
-import { inject } from "vue";
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '~/stores/user.store.ts'
 
-const state = inject("state");
-const router = useRouter();
+const userStore = useUserStore()
+const router = useRouter()
+
+const isLogin = computed(() => !!token.value)
+const token = ref(null)
 
 const clickToLogout = () => {
-  // todo
-};
+  userStore.logout()
+  localStorage.removeItem('token') // 清除 localStorage 中的 token
+  token.value = null // 确保 token 状态被更新
+  router.push('/login')
+}
 
 const goToStartSelling = () => {
-  router.push('/start-selling');
-};
+  router.push('/start-selling')
+}
+
+const goToHome = () => {
+  router.push('/')
+}
+
+onMounted(() => {
+  token.value = localStorage.getItem('token') // 获取存储的 token
+})
 </script>
 
 <style scoped>
@@ -97,10 +120,6 @@ span {
   align-items: center;
 }
 
-.nav-top-right {
-  flex-wrap: wrap;
-}
-
 .nav-top-left-opt {
   display: flex;
   justify-content: space-evenly;
@@ -111,12 +130,10 @@ span {
 }
 
 .nav-middle {
-  height: 73px;
-  margin-top: 5px;
-  margin-left: 35px;
-  margin-right: 35px;
   display: flex;
+  justify-content: center;
   align-items: center;
+  flex: 1;
 }
 
 .shop {

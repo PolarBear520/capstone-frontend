@@ -2,13 +2,9 @@
   <AppHeader></AppHeader>
 
   <div class="chat-container mx-auto p-8 bg-white shadow-md rounded mt-10 mb-10">
-    <h2 class="text-2xl font-bold text-center mb-12">You are talking to "seller name"...</h2>
+    <h2 class="text-2xl font-bold text-center mb-12">Conversation ID: {{ conversationId }}</h2>
     <div class="messages">
-      <div v-for="message in messages" :key="message.id" :class="['message', { 'from-seller': message.senderId === sellerId, 'from-buyer': message.senderId === buyerId }]">
-        <div class="profile-section">
-          <div class="profile-pic-placeholder"></div>
-          <p class="sender-name">{{ message.senderId === sellerId ? 'Seller' : 'Buyer' }}</p>
-        </div>
+      <div v-for="message in messages" :key="message.id" :class="['message', { 'from-user': message.senderId === userId, 'from-other': message.senderId !== userId }]">
         <div class="message-content">{{ message.content }}</div>
       </div>
     </div>
@@ -24,9 +20,10 @@
 
 <script>
 import axios from 'axios';
-import AppHeader from '@/components/AppHeader'
-import AppBottom from '@/components/AppBottom'
+import AppHeader from '@/components/AppHeader';
+import AppBottom from '@/components/AppBottom';
 import { useRoute } from 'vue-router';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   components: {
@@ -37,37 +34,48 @@ export default {
     return {
       newMessage: '', // 用于绑定到 textarea 以获取消息输入
       messages: [], // 用于存储会话的全部消息
-      sellerId: 2, // 示例卖家 ID，应根据实际情况动态设置
-      buyerId: 1 // 示例买家 ID，应根据实际情况动态设置
+      userId: null, // 当前用户的ID
+      conversationId: null // 当前会话的ID
     };
   },
   async mounted() {
     const route = useRoute();
-    const conversationId = route.query.conversationId;
-    await this.getConversationMessages(conversationId);
+    this.conversationId = route.query.conversationId;
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        this.userId = decodedToken.userId; // 获取用户ID
+      } catch (error) {
+        console.error('Failed to decode token:', error);
+      }
+    } else {
+      console.warn('No token found');
+    }
+
+    await this.getConversationMessages(this.conversationId);
   },
   methods: {
     async getConversationMessages(conversationId) {
       try {
-        const response = await axios.get(`/api/conversations/${conversationId}`);
+        const response = await axios.get(`http://localhost:8081/api/messages/conversation/${conversationId}`);
         this.messages = response.data;
       } catch (error) {
         console.error('Error fetching conversation messages:', error);
       }
     },
     async sendMessage() {
-      const route = useRoute();
-      const conversationId = route.query.conversationId;
       const messageData = {
-        senderId: this.buyerId,  // 示例发送者 ID，应该根据实际用户动态设置
-        conversationId: conversationId, // 使用传入的会话 ID
+        senderId: this.userId, // 当前用户ID
+        conversationId: this.conversationId, // 当前会话ID
         content: this.newMessage
       };
       try {
-        const response = await axios.post('/api/messages', messageData);
+        const response = await axios.post('http://localhost:8081/api/messages', messageData);
         console.log('Message sent successfully', response.data);
         this.newMessage = ''; // 发送后清空消息输入框
-        await this.getConversationMessages(messageData.conversationId); // 重新获取消息
+        await this.getConversationMessages(this.conversationId); // 重新获取消息
       } catch (error) {
         console.error('Error sending message:', error);
       }
@@ -97,35 +105,15 @@ export default {
 
 .message {
   display: flex;
-  justify-content: flex-start; 
   margin-bottom: 15px;
 }
 
-.from-seller {
-  flex-direction: row;
+.from-user {
+  justify-content: flex-end; 
 }
 
-.from-buyer {
-  flex-direction: row-reverse; 
-}
-
-.profile-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 10px;
-}
-
-.profile-pic-placeholder {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #bbb; 
-}
-
-.sender-name {
-  font-size: 16px;
-  color: #333;
+.from-other {
+  justify-content: flex-start; 
 }
 
 .message-content {

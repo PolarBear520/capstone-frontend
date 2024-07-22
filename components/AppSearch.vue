@@ -15,6 +15,7 @@
     <div v-if="searchResults.length">
       <h2>Search Results:</h2>
       <div v-for="product in searchResults" :key="product.productId" class="product-card" @click="goToProductPage(product.productId)">
+        <img :src="product.imageUrl || 'https://via.placeholder.com/150'" alt="Product Image" class="product-image"/>
         <p>Product Name: {{ product.productName }}</p>
         <p>Description: {{ product.description }}</p>
         <p>Price: {{ product.price }}</p>
@@ -116,5 +117,13 @@ input {
 
 .product-card:hover {
   transform: scale(1.05);
+}
+
+.product-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
 </style>

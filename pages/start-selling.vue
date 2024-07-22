@@ -98,7 +98,7 @@ async function generateDescription() {
     return;
   }
 
-  const apiKey = '替换为您的实际OpenAI API密钥'; // 替换为您的实际OpenAI API密钥
+  const apiKey = 'sk-proj-cM7QTrmVjNmPXwkjYWeZT3BlbkFJFi2u2TlmBNjzlOuvIiiZ'; // 替换为您的实际OpenAI API密钥
   const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
   const data = {
